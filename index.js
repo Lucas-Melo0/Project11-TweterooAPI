@@ -43,5 +43,23 @@ server.get("/tweets", (req, res) => {
   res.status(200).send(latestTweets);
 });
 
+server.get("/tweets/:user", (req, res) => {
+  const { user } = req.params;
+  console.log(user);
+
+  const userTweets = tweets.filter((tweet) => {
+    if (tweet.username === user) {
+      return tweet;
+    }
+  });
+  const userTweetsWithAvatar = userTweets.map((value) => {
+    const avatar = users.find((user) => {
+      return user.username === value.username;
+    })?.avatar;
+    return { ...value, avatar: avatar };
+  });
+
+  res.status(200).send(userTweetsWithAvatar);
+});
 console.log(tweets);
 server.listen(5000);
