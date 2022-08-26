@@ -5,21 +5,32 @@ const server = express();
 server.use(express.urlencoded({ extended: false }));
 server.use(express.json());
 server.use(cors());
+
 const users = [];
 const tweets = [];
 
 server.post("/sign-up", (req, res) => {
   const user = req.body;
-  users.push(user);
-  res.send("OK");
+  const { username, avatar } = user;
+  if (username.length === 0 || avatar.length === 0) {
+    res.status(400).send("Todos os campos precisam ser enviados");
+  } else {
+    users.push(user);
+    res.status(201).send("OK");
+  }
 });
 
 server.post("/tweets", (req, res) => {
-  const tweet = req.body;
-  tweets.push(tweet);
-  console.log(tweets);
-  res.send("OK");
+  const message = req.body;
+  const { username, tweet } = message;
+  if (username.length === 0 || tweet.length === 0) {
+    res.status(400).send("Todos os campos precisam ser enviados");
+  } else {
+    tweets.push(message);
+    res.status(201).send("OK");
+  }
 });
+
 server.get("/tweets", (req, res) => {
   let lastTenTweets = tweets.slice(-10);
 
@@ -29,7 +40,8 @@ server.get("/tweets", (req, res) => {
     })?.avatar;
     return { ...value, avatar: avatar };
   });
-  res.send(latestTweets);
+  res.status(200).send(latestTweets);
 });
+
 console.log(tweets);
 server.listen(5000);
