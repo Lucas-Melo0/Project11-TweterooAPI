@@ -7,7 +7,6 @@ const signupSchema = Joi.object({
 });
 
 const tweetsSchema = Joi.object({
-  username: Joi.string().required(),
   tweet: Joi.string().required(),
 });
 

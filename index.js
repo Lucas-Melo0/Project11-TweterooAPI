@@ -23,19 +23,22 @@ server.post("/sign-up", (req, res) => {
 
 server.post("/tweets", (req, res) => {
   const tweet = req.body;
+  const user = req.headers.user;
 
   const { error } = validateTweets(tweet);
   if (error) {
     return res.status(400).send("Todos os campos precisam ser enviados");
   }
-  tweets.push(tweet);
+  tweets.push({ ...tweet, username: user });
+
   res.status(201).send("OK");
 });
 
 server.get("/tweets", (req, res) => {
-  let lastTenTweets = tweets.slice(-10);
+  const page = Number(req.query.page);
 
-  const latestTweets = lastTenTweets.map((value) => {
+  const lastXTweets = tweets.slice(-10 * page);
+  const latestTweets = lastXTweets.map((value) => {
     const avatar = users.find((user) => {
       return user.username === value.username;
     })?.avatar;
