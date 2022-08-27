@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-
 import { validateSignup, validateTweets } from "./validator.js";
 const server = express();
 
@@ -16,11 +15,10 @@ server.post("/sign-up", (req, res) => {
 
   const { error } = validateSignup(user);
   if (error) {
-    res.status(400).send("Todos os campos precisam ser enviados");
-  } else {
-    users.push(user);
-    res.status(201).send("OK");
+    return res.status(400).send("Todos os campos precisam ser enviados");
   }
+  users.push(user);
+  res.status(201).send("OK");
 });
 
 server.post("/tweets", (req, res) => {
@@ -28,11 +26,10 @@ server.post("/tweets", (req, res) => {
 
   const { error } = validateTweets(tweet);
   if (error) {
-    res.status(400).send("Todos os campos precisam ser enviados");
-  } else {
-    tweets.push(tweet);
-    res.status(201).send("OK");
+    return res.status(400).send("Todos os campos precisam ser enviados");
   }
+  tweets.push(tweet);
+  res.status(201).send("OK");
 });
 
 server.get("/tweets", (req, res) => {
