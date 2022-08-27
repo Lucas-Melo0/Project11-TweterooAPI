@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+
+import { validateSignup, validateTweets } from "./validator.js";
 const server = express();
 
 server.use(express.urlencoded({ extended: false }));
@@ -11,8 +13,9 @@ const tweets = [];
 
 server.post("/sign-up", (req, res) => {
   const user = req.body;
-  const { username, avatar } = user;
-  if (username.length === 0 || avatar.length === 0) {
+
+  const { error } = validateSignup(user);
+  if (error) {
     res.status(400).send("Todos os campos precisam ser enviados");
   } else {
     users.push(user);
@@ -21,12 +24,13 @@ server.post("/sign-up", (req, res) => {
 });
 
 server.post("/tweets", (req, res) => {
-  const message = req.body;
-  const { username, tweet } = message;
-  if (username.length === 0 || tweet.length === 0) {
+  const tweet = req.body;
+
+  const { error } = validateTweets(tweet);
+  if (error) {
     res.status(400).send("Todos os campos precisam ser enviados");
   } else {
-    tweets.push(message);
+    tweets.push(tweet);
     res.status(201).send("OK");
   }
 });
@@ -45,7 +49,6 @@ server.get("/tweets", (req, res) => {
 
 server.get("/tweets/:user", (req, res) => {
   const { user } = req.params;
-  console.log(user);
 
   const userTweets = tweets.filter((tweet) => {
     if (tweet.username === user) {
@@ -61,5 +64,5 @@ server.get("/tweets/:user", (req, res) => {
 
   res.status(200).send(userTweetsWithAvatar);
 });
-console.log(tweets);
+
 server.listen(5000);
