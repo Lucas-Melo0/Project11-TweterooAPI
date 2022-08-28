@@ -30,21 +30,22 @@ server.post("/tweets", (req, res) => {
     return res.status(400).send("Todos os campos precisam ser enviados");
   }
   tweets.push({ ...tweet, username: user });
-
   res.status(201).send("OK");
 });
 
 server.get("/tweets", (req, res) => {
   const page = Number(req.query.page);
-
-  const lastXTweets = tweets.slice(-10 * page);
-  const latestTweets = lastXTweets.map((value) => {
-    const avatar = users.find((user) => {
-      return user.username === value.username;
-    })?.avatar;
-    return { ...value, avatar: avatar };
-  });
-  res.status(200).send(latestTweets);
+  if (page >= 1) {
+    const lastXTweets = tweets.slice(-10 * page, -10 * page + 9);
+    const latestTweets = lastXTweets.map((value) => {
+      const avatar = users.find((user) => {
+        return user.username === value.username;
+      })?.avatar;
+      return { ...value, avatar: avatar };
+    });
+    return res.status(200).send(latestTweets);
+  }
+  res.status(400).send("Informe uma página válida");
 });
 
 server.get("/tweets/:user", (req, res) => {
